@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicBot", "MagicBot\MagicBot.csproj", "{091B3D5A-DE14-4433-8799-E5EA558CCADC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicBotUnitTests", "MagicBotUnitTests\MagicBotUnitTests.csproj", "{2C4D9503-F9AC-4A18-A073-DA8AB2DE2B10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{091B3D5A-DE14-4433-8799-E5EA558CCADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{091B3D5A-DE14-4433-8799-E5EA558CCADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{091B3D5A-DE14-4433-8799-E5EA558CCADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C4D9503-F9AC-4A18-A073-DA8AB2DE2B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C4D9503-F9AC-4A18-A073-DA8AB2DE2B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C4D9503-F9AC-4A18-A073-DA8AB2DE2B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C4D9503-F9AC-4A18-A073-DA8AB2DE2B10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
