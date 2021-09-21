@@ -63,6 +63,8 @@ namespace MagicBot.Managers
                         {
                             var cardUri = await _scryfallApi.GetCardImageUrlByName(cardName);
                             inputMedia.Add(new InputMediaPhoto(cardUri));
+                            //following scryfall api's guidelines
+                            await Task.Delay(55, cancellationToken);
                         }
 
                         await botClient.SendMediaGroupAsync(chatId, inputMedia, cancellationToken: cancellationToken);
