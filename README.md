@@ -11,7 +11,7 @@ This is a telegram bot used to post images of Magic the Gathering cards into a c
 * Surround the name of the card in [[double brackets]]
   * [[Professor Onyx]]
   * I like [[Professor Onyx]] more than [[Liliana of the Dark Realms]]
-   * The bot will batch messages with multiple card requests into a single album post.
+    * The bot will batch messages with multiple card requests into a single album post.
 * You can also get a random card, with optional querying.
   * [[Random]]
   * [[Random t:goblin]]
