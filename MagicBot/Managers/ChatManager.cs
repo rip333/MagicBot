@@ -1,0 +1,40 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Telegram.Bot;
+using Telegram.Bot.Exceptions;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+
+namespace MagicBot.Managers
+{
+    public class ChatManager
+    {
+        public static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        {
+            var errorMessage = exception switch
+            {
+                ApiRequestException apiRequestException => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
+                _                                       => exception.ToString()
+            };
+
+            Console.WriteLine(errorMessage);
+            return Task.CompletedTask;
+        }
+
+        public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        {
+            if (update.Type != UpdateType.Message)
+                return;
+            if (update.Message != null && update.Message.Type != MessageType.Text)
+                return;
+
+            var chatId = update.Message.Chat.Id;
+    
+            Console.WriteLine($"Received a '{update.Message.Text}' message in chat {chatId}.");
+
+            await botClient.SendTextMessageAsync(chatId: chatId, text:   "You said:\n" + update.Message.Text
+, cancellationToken: cancellationToken);
+        }
+    }
+}
