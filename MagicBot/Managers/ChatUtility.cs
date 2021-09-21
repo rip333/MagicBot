@@ -1,17 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Bot.Types;
 
 namespace MagicBot.Managers
 {
     public class ChatUtility
     {
-        public static bool ShouldReturnImageUri(string message)
+        public static bool ShouldReturnImageUri(Message message)
         {
-            if (message.Contains("[[") && message.Contains("]]"))
+            if (message.Date.AddMinutes(5) < DateTime.UtcNow)
             {
-                return message.IndexOf("[[", StringComparison.Ordinal) <
-                       message.IndexOf("]]", StringComparison.Ordinal);
+                return false;
+            }
+            if (message.Text.Contains("[[") && message.Text.Contains("]]"))
+            {
+                return message.Text.IndexOf("[[", StringComparison.Ordinal) <
+                       message.Text.IndexOf("]]", StringComparison.Ordinal);
             }
 
             return false;

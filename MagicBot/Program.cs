@@ -10,7 +10,7 @@ namespace MagicBot
 {
     class Program
     {
-        private static TelegramBotClient? _bot;
+        private static TelegramBotClient _bot;
         private static UpdateManager _updateManager;
         static async Task Main(string[] args)
         {
@@ -34,8 +34,7 @@ namespace MagicBot
                 cts.Token);
 
             Console.WriteLine($"Start listening for @{me.Username}");
-            Console.ReadLine();
-
+            Console.Read();
             // Send cancellation request to stop bot
             cts.Cancel();
         }

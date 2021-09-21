@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using MagicBot.Managers;
 using NUnit.Framework;
+using Telegram.Bot.Types;
 
 namespace MagicBotUnitTests
 {
@@ -11,18 +13,24 @@ namespace MagicBotUnitTests
         [TestCase("[[card     name]]")]
         [TestCase("I'm running [[cardname]]")]
         [TestCase("MY deck contains [[cardname1]] and [[cardname2]]")]
-        public void ShouldReturnImageUri_True(string cardname)
+        public void ShouldReturnImageUri_True(string text)
         {
-            Assert.True(ChatUtility.ShouldReturnImageUri(cardname));
+            Assert.True(ChatUtility.ShouldReturnImageUri(new Message(){Text = text, Date = DateTime.UtcNow}));
         }
         
         [TestCase("")]
         [TestCase("[cardname]")]
         [TestCase("[[cardname")]
         [TestCase("]] nonsense [[")]
-        public void ShouldReturnImageUri_False(string cardname)
+        public void ShouldReturnImageUri_FalseText(string text)
         {
-            Assert.False(ChatUtility.ShouldReturnImageUri(cardname));
+            Assert.False(ChatUtility.ShouldReturnImageUri(new Message(){Text = text, Date = DateTime.UtcNow}));
+        }
+
+        [Test]
+        public void ShouldReturnImageUri_FalseDate()
+        {
+            Assert.False(ChatUtility.ShouldReturnImageUri(new Message(){ Date = DateTime.UtcNow.AddMinutes(-6)}));
         }
 
         [TestCase("[[card1]]", new [] { "card1"})]

@@ -45,7 +45,7 @@ namespace MagicBot.Managers
 
             Console.WriteLine($"Received a '{update.Message.Text}' message in chat {chatId}.");
 
-            if (ChatUtility.ShouldReturnImageUri(update.Message.Text))
+            if (ChatUtility.ShouldReturnImageUri(update.Message))
             {
                 try
                 {
@@ -68,7 +68,7 @@ namespace MagicBot.Managers
                         await botClient.SendMediaGroupAsync(chatId, inputMedia, cancellationToken: cancellationToken);
                     }
                 }
-                catch (NoCardFoundException e)
+                catch (NoCardFoundException)
                 {
                     Console.WriteLine($"No card found exception in message: {update.Message.Text}");
                 }
