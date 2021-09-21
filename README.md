@@ -16,3 +16,6 @@ This is a telegram bot used to post images of Magic the Gathering cards into a c
   * [[Random t:goblin]]
   * [Query syntax](https://scryfall.com/docs/syntax)
 
+## More Info
+- [Telegram Bots](https://core.telegram.org/bots)
+- [Scryfall API](https://scryfall.com/docs/api)
