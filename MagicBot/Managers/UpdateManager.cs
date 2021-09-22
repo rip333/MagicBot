@@ -40,10 +40,12 @@ namespace MagicBot.Managers
                 return;
             if (update.Message != null && update.Message.Type != MessageType.Text)
                 return;
+            if (update.Message == null)
+                return;
 
             var chatId = update.Message.Chat.Id;
 
-            Console.WriteLine($"Received a '{update.Message.Text}' message in chat {chatId}.");
+            Console.WriteLine($"Received message in chat {chatId}.");
 
             if (ChatUtility.ShouldReturnImageUri(update.Message))
             {
@@ -53,6 +55,7 @@ namespace MagicBot.Managers
                     if (cardNames.Count == 1)
                     {
                         var cardUri = await _scryfallApi.GetCardImageUrlByName(cardNames[0]);
+                        Console.WriteLine($"Sending photo for card name - {cardNames[0]}.");
                         await botClient.SendPhotoAsync(chatId: chatId, photo: cardUri,
                             cancellationToken: cancellationToken);
                     }
@@ -66,7 +69,7 @@ namespace MagicBot.Managers
                             //following scryfall api's guidelines
                             await Task.Delay(55, cancellationToken);
                         }
-
+                        Console.WriteLine($"Sending photo for card names - {string.Join(", ", cardNames)}.");
                         await botClient.SendMediaGroupAsync(chatId, inputMedia, cancellationToken: cancellationToken);
                     }
                 }
