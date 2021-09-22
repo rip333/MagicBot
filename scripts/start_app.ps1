@@ -1,3 +1,3 @@
-cd C:\Users\Administrator\Desktop\MagicBot
+cd C:\Users\Administrator\Desktop\MagicBot\magicbot\net5.0
 
 &".\magicbot.exe"
