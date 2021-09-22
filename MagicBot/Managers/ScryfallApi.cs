@@ -31,7 +31,7 @@ namespace MagicBot.Managers
             }
 
             var card = JsonConvert.DeserializeObject<Card>(jsonString);
-            if (card.Status == 404 || card.ImageUris.Normal == null)
+            if (card.Status == 404 || card.ImageUris == null || card.ImageUris.Normal == null)
             {
                 throw new NoCardFoundException();
             }
