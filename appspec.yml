@@ -1,0 +1,14 @@
+version: 0.0
+os: windows
+files:
+ - source: .
+   destination: C:\Users\Administrator\Desktop\Repo\MagicBot
+hooks:
+  AfterInstall:
+   - location: C:\Users\Administrator\Desktop\Repo\MagicBot\scripts\build.ps1
+     timeout: 300
+     runas: root
+  ApplicationStart:
+   - location: C:\Users\Administrator\Desktop\Repo\MagicBot\scripts\start_app.ps1
+     timeout: 300
+     runas: root
