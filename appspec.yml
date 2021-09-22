@@ -6,7 +6,7 @@ files:
 hooks:
   AfterInstall:
    - location: scripts\build.ps1
-     timeout: 300
+     timeout: 60
   ApplicationStart:
    - location: scripts\start_app.ps1
-     timeout: 300
+     timeout: 10
