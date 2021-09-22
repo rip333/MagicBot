@@ -1,5 +1,5 @@
-cd C:\Users\Administrator\Desktop\Repo\MagicBot
+cd C:\temp\apps\magicbot
 dotnet build --configuration Release
-Compress-Archive -Path C:\Users\Administrator\Desktop\Repo\MagicBot\MagicBot\bin\Release\net5.0 -DestinationPath C:\Users\Administrator\Desktop\MagicBot\magicbot.zip
+Compress-Archive -Path C:\temp\apps\magicbot\MagicBot\bin\Release\net5.0 -DestinationPath C:\Users\Administrator\Desktop\MagicBot\magicbot.zip
 cd C:\Users\Administrator\Desktop\MagicBot
 Expand-Archive -Path magicbot.zip
