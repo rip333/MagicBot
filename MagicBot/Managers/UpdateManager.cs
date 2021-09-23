@@ -13,7 +13,7 @@ namespace MagicBot.Managers
 {
     public class UpdateManager
     {
-        private ScryfallApi _scryfallApi;
+        private IScryfallApi _scryfallApi;
 
         public UpdateManager(ScryfallApi scryfallApi)
         {
