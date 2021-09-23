@@ -9,10 +9,10 @@ namespace MagicBot.Managers
 {
     public class ScryfallApi : IScryfallApi
     {
-        private HttpClient _httpClient;
-        public ScryfallApi(HttpClient httpClient)
+        private IScryfallClient _scryfallClient;
+        public ScryfallApi(IScryfallClient scryfallClient)
         {
-            _httpClient = httpClient;
+            _scryfallClient = scryfallClient;
         }
 
         public async Task<string> GetCardImageUrlByName(string name)
@@ -21,17 +21,15 @@ namespace MagicBot.Managers
             if (name.ToUpper().StartsWith("RANDOM"))
             {
                 var query = HttpUtility.HtmlDecode(name.ToUpper().Remove(0, 6).Trim());
-                var response = await _httpClient.GetAsync($"cards/random?q={query}");
-                jsonString = await response.Content.ReadAsStringAsync();
+                jsonString = await _scryfallClient.GetRandomCardWithQuery(query);
             }
             else
             {
-                var response = await _httpClient.GetAsync("cards/named?fuzzy=" + name);
-                jsonString = await response.Content.ReadAsStringAsync();
+                jsonString = await _scryfallClient.GetFuzzyNamedCard(name);
             }
 
             var card = JsonConvert.DeserializeObject<Card>(jsonString);
-            if (card.Status == 404 || card.ImageUris == null || card.ImageUris.Normal == null)
+            if (card.Status == 404 || card.ImageUris?.Normal == null)
             {
                 throw new NoCardFoundException();
             }
