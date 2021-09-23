@@ -6,6 +6,11 @@
 
 This is a telegram bot used to post images of Magic the Gathering cards into a chat.  It uses [Scryfall API](https://api.scryfall.com) for the data.
 
+### CI/CD
+
+- [GitHub Actions](https://github.com/rip333/MagicBot/blob/master/.github/workflows/workflow.yml)
+- [AWS CodeDeploy](https://github.com/rip333/MagicBot/blob/master/appspec.yml)
+
 ## Syntax
 
 * Surround the name of the card in [[double brackets]]
@@ -20,3 +25,5 @@ This is a telegram bot used to post images of Magic the Gathering cards into a c
 ## More Info
 - [Telegram Bots](https://core.telegram.org/bots)
 - [Scryfall API](https://scryfall.com/docs/api)
+- [GitHub Actions](https://docs.github.com/en/actions)
+- [AWS CodeDeploy](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html)
