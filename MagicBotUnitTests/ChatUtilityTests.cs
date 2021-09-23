@@ -42,10 +42,5 @@ namespace MagicBotUnitTests
         {
             Assert.AreEqual(cardNames.ToList(), ChatUtility.GetCardNamesInMessage(message));
         }
-
-        [Test]
-        public void Fail() {
-            Assert.True(false);
-        }
     }
 }
