@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
+using MagicBot.Models.Scryfall;
 
 namespace MagicBot.Managers
 {
     public interface IScryfallApi
     {
-        Task<string> GetCardImageUrlByName(string name);
+        Task<Card> GetCardByName(string name);
+        Task<Card> GetCardBySetCodeAndCollectorNumber(GetCardImageUriBySetCodeAndCollectorNumberRequest request);
     }
 }

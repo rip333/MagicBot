@@ -37,8 +37,8 @@ namespace MagicBotUnitTests
             var jsonCard = JsonConvert.SerializeObject(randomCard);
             _mockScryfallClient.Setup(x => x.GetRandomCardWithQuery(It.Is<string>(y => y == ""))).ReturnsAsync(jsonCard);
 
-            var response = await _scryfallApi.GetCardImageUrlByName("random");
-            Assert.AreEqual(randomCard.ImageUris.Normal, response);
+            var response = await _scryfallApi.GetCardByName("random");
+            Assert.AreEqual(randomCard.ImageUris.Normal, response.ImageUris.Normal);
         }
         
         [Test]
@@ -57,8 +57,8 @@ namespace MagicBotUnitTests
             var jsonCard = JsonConvert.SerializeObject(randomCard);
             _mockScryfallClient.Setup(x => x.GetRandomCardWithQuery(It.Is<string>(y => y == "QUERY"))).ReturnsAsync(jsonCard);
 
-            var response = await _scryfallApi.GetCardImageUrlByName("random query");
-            Assert.AreEqual(randomCard.ImageUris.Normal, response);
+            var response = await _scryfallApi.GetCardByName("random query");
+            Assert.AreEqual(randomCard.ImageUris.Normal, response.ImageUris.Normal);
         }
         
         [Test]
@@ -78,8 +78,8 @@ namespace MagicBotUnitTests
             var jsonCard = JsonConvert.SerializeObject(namedCard);
             _mockScryfallClient.Setup(x => x.GetFuzzyNamedCard(It.Is<string>(y => y == nameQuery))).ReturnsAsync(jsonCard);
 
-            var response = await _scryfallApi.GetCardImageUrlByName(nameQuery);
-            Assert.AreEqual(namedCard.ImageUris.Normal, response);
+            var response = await _scryfallApi.GetCardByName(nameQuery);
+            Assert.AreEqual(namedCard.ImageUris.Normal, response.ImageUris.Normal);
         }
         
         [Test]
@@ -94,42 +94,7 @@ namespace MagicBotUnitTests
             var jsonCard = JsonConvert.SerializeObject(errorCard);
             _mockScryfallClient.Setup(x => x.GetFuzzyNamedCard(It.Is<string>(y => y == errorQuery))).ReturnsAsync(jsonCard);
 
-            Assert.ThrowsAsync<NoCardFoundException>(() => _scryfallApi.GetCardImageUrlByName(errorQuery));
-        }
-        
-        [Test]
-        public void GetCardImageUrlByName_EmptyImageUris()
-        {
-            var errorCard = new Card()
-            {
-                Status = 200,
-                ImageUris = null
-            };
-
-            const string errorQuery = "ERROR_QUERY";
-            var jsonCard = JsonConvert.SerializeObject(errorCard);
-            _mockScryfallClient.Setup(x => x.GetFuzzyNamedCard(It.Is<string>(y => y == errorQuery))).ReturnsAsync(jsonCard);
-
-            Assert.ThrowsAsync<NoCardFoundException>(() => _scryfallApi.GetCardImageUrlByName(errorQuery));
-        }
-        
-        [Test]
-        public void GetCardImageUrlByName_EmptyNormalImageUri()
-        {
-            var errorCard = new Card()
-            {
-                Status = 200,
-                ImageUris = new ImageUris()
-                {
-                    Normal = null
-                }
-            };
-
-            const string errorQuery = "ERROR_QUERY";
-            var jsonCard = JsonConvert.SerializeObject(errorCard);
-            _mockScryfallClient.Setup(x => x.GetFuzzyNamedCard(It.Is<string>(y => y == errorQuery))).ReturnsAsync(jsonCard);
-
-            Assert.ThrowsAsync<NoCardFoundException>(() => _scryfallApi.GetCardImageUrlByName(errorQuery));
+            Assert.ThrowsAsync<NoCardFoundException>(() => _scryfallApi.GetCardByName(errorQuery));
         }
     }
 }

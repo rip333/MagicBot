@@ -14,6 +14,12 @@ namespace MagicBot.Models.Scryfall
         public ImageUris ImageUris { get; set; }
         [JsonProperty("status")]
         public int Status { get; set; }
+        [JsonProperty("set")]
+        public string Set { get; set; }
+        [JsonProperty("collector_number")]
+        public string CollectorNumber { get; set; }
+        [JsonProperty("type_line")]
+        public string TypeLine { get; set; }
     }
 
     public class ImageUris

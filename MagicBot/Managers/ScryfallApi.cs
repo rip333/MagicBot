@@ -15,7 +15,7 @@ namespace MagicBot.Managers
             _scryfallClient = scryfallClient;
         }
 
-        public async Task<string> GetCardImageUrlByName(string name)
+        public async Task<Card> GetCardByName(string name)
         {
             string jsonString;
             if (name.ToUpper().StartsWith("RANDOM"))
@@ -29,12 +29,23 @@ namespace MagicBot.Managers
             }
 
             var card = JsonConvert.DeserializeObject<Card>(jsonString);
-            if (card.Status == 404 || card.ImageUris?.Normal == null)
+            if (card.Status == 404)
             {
                 throw new NoCardFoundException();
             }
 
-            return card.ImageUris.Normal;
+            return card;
+        }
+
+        public async Task<Card> GetCardBySetCodeAndCollectorNumber(GetCardImageUriBySetCodeAndCollectorNumberRequest request)
+        {
+            var jsonString = await _scryfallClient.GetCardBySetCodeAndCollectorNumber(request.SetCode, request.CollectorNumber);
+            var card = JsonConvert.DeserializeObject<Card>(jsonString);
+            if (card.Status == 404)
+            {
+                throw new NoCardFoundException();
+            }
+            return card;
         }
     }
 }

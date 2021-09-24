@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MagicBot.Models.Enums;
 using MagicBot.Models.Exceptions;
+using MagicBot.Models.Scryfall;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -48,50 +50,112 @@ namespace MagicBot.Managers
 
             Console.WriteLine($"Received message in chat {chatId}.");
 
-            if (ChatUtility.ShouldReturnImageUri(update.Message))
+            var text = update.Message.Text;
+            if (ChatUtility.ShouldProcessMessage(update.Message))
             {
-                var cardNames = ChatUtility.GetCardNamesInMessage(update.Message.Text);
-                if (cardNames.Count == 1)
+                var mesageType = ChatUtility.ProcessMessageType(text);
+                switch (mesageType)
                 {
-                    try
+                    case MagicMessageType.Card:
                     {
-                        var cardUri = await _scryfallApi.GetCardImageUrlByName(cardNames[0]);
-                        Console.WriteLine($"Sending photo for card name - {cardNames[0]}.");
-                        await botClient.SendPhotoAsync(chatId: chatId, photo: cardUri,
-                            cancellationToken: cancellationToken);
+                        var cardNames = ChatUtility.GetCardNamesFromBracketedMessage(text);
+                        var cards = await GetCardsFromNames(cardNames);
+                        var cardUris = FilterBasicLands(cards).Where(x => x.ImageUris is {Normal: { }}).Select(x => x.ImageUris.Normal).ToList();
+                        await SendCardImageMessages(botClient, cancellationToken, cardUris, chatId);
+                        break;
                     }
-                    catch (NoCardFoundException)
+                    case MagicMessageType.Deck:
                     {
-                        Console.WriteLine($"No card image found for: {cardNames[0]}");
+                        var mainDeck = ChatUtility.GetMainDeckFromDeckList(text);
+                        var cardRequests = ChatUtility.GetRequestsFromDecklist(mainDeck);
+                        var cards = await GetCardsFromSetCodeAndCollectorNumberRequests(cardRequests);
+                        var cardUris = FilterBasicLands(cards).Where(x => x.ImageUris is {Normal: { }}).Select(x => x.ImageUris.Normal).ToList();
+                        await SendCardImageMessages(botClient, cancellationToken, cardUris, chatId);
+
+                        //Sideboard
+                        if (ChatUtility.HasSideboard(text))
+                        {
+                            await botClient.SendTextMessageAsync(chatId, "-----Sideboard-----", cancellationToken: cancellationToken);
+                            var sideboard = ChatUtility.GetSideboardFromDecklist(text);
+                            var sideboardCardRequests = ChatUtility.GetRequestsFromDecklist(sideboard);
+                            var sideBoardCards = await GetCardsFromSetCodeAndCollectorNumberRequests(sideboardCardRequests);
+                            var sideboardCardUris = FilterBasicLands(sideBoardCards).Where(x => x.ImageUris is {Normal: { }}).Select(x => x.ImageUris.Normal).ToList();
+                            await SendCardImageMessages(botClient, cancellationToken, sideboardCardUris, chatId);
+                        }
+                        break;
                     }
                 }
-                else if (cardNames.Count > 1)
+            }
+            
+        }
+
+        private IEnumerable<Card> FilterBasicLands(List<Card> cardList)
+        {
+            return cardList.Where(x => !x.TypeLine.Contains("Basic"));
+        }
+
+        private async Task<List<Card>> GetCardsFromNames(List<string> names)
+        {
+            var cardList = new List<Card>();
+            foreach (var name in names)
+            {
+                try
+                { 
+                    var card = await _scryfallApi.GetCardByName(name);
+                    cardList.Add(card);
+                    Console.WriteLine($"Successfully acquired image uri for name: {name}");
+                }
+                catch (NoCardFoundException)
                 {
-                    var inputMedia = new List<IAlbumInputMedia>();
-                    foreach (var cardName in cardNames)
-                    {
-                        try
-                        {
-                            var cardUri = await _scryfallApi.GetCardImageUrlByName(cardName);
-                            inputMedia.Add(new InputMediaPhoto(cardUri));
-                            //following scryfall api's guidelines
-                            await Task.Delay(55, cancellationToken);
-                        }
-                        catch (NoCardFoundException)
-                        {
-                            Console.WriteLine($"No card image found for: {cardName}");
-                        }
-                    }
+                    Console.WriteLine($"No card image found for: {name}");
+                }
+            }
+            return cardList;
+        }
 
-                    for (var i = 0; i < inputMedia.Count; i = i + 6)
-                    {
-                        List<IAlbumInputMedia> mediaSubBatch;
+        private async Task<List<Card>> GetCardsFromSetCodeAndCollectorNumberRequests(
+            List<GetCardImageUriBySetCodeAndCollectorNumberRequest> requests)
+        {
+            var cardList = new List<Card>();
+            foreach (var request in requests)
+            {
+                try {
+                    var card = await _scryfallApi.GetCardBySetCodeAndCollectorNumber(request);
+                    cardList.Add(card);
+                    Console.WriteLine($"Successfully acquired image uri for setCode/collectorNumber: {request.SetCode}/{request.CollectorNumber}");
+                }
+                catch (NoCardFoundException)
+                {
+                    Console.WriteLine($"No card image found for setCode/collectorNumber: {request.SetCode}/{request.CollectorNumber}");
+                }
+            }
+            return cardList;
+        }
 
-                        mediaSubBatch = inputMedia.Count - 6 < i ? inputMedia.Skip(i).ToList() : inputMedia.GetRange(i, 6);
+        private async Task SendCardImageMessages(ITelegramBotClient botClient, CancellationToken cancellationToken,
+            List<string> cardUris, long chatId)
+        {
+            if (cardUris.Count == 1)
+            {
+                await botClient.SendPhotoAsync(chatId: chatId, photo: cardUris[0],
+                        cancellationToken: cancellationToken);
+            }
+            else if (cardUris.Count > 1)
+            {
+                var inputMedia = new List<IAlbumInputMedia>();
+                foreach (var cardUri in cardUris)
+                {
 
-                        Console.WriteLine($"Sending photo for card names - {string.Join(", ", cardNames)}.");
-                        await botClient.SendMediaGroupAsync(chatId, mediaSubBatch, cancellationToken: cancellationToken);
-                    }
+                        inputMedia.Add(new InputMediaPhoto(cardUri));
+                }
+
+                for (var i = 0; i < inputMedia.Count; i = i + 6)
+                {
+                    List<IAlbumInputMedia> mediaSubBatch;
+
+                    mediaSubBatch = inputMedia.Count - 6 < i ? inputMedia.Skip(i).ToList() : inputMedia.GetRange(i, 6);
+
+                    await botClient.SendMediaGroupAsync(chatId, mediaSubBatch, cancellationToken: cancellationToken);
                 }
             }
         }
