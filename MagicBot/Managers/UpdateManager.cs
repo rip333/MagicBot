@@ -60,7 +60,7 @@ namespace MagicBot.Managers
                     {
                         var cardNames = ChatUtility.GetCardNamesFromBracketedMessage(text);
                         var cards = await GetCardsFromNames(cardNames);
-                        var cardUris = FilterBasicLands(cards).Where(x => x.ImageUris is {Normal: { }}).Select(x => x.ImageUris.Normal).ToList();
+                        var cardUris = cards.Where(x => x.ImageUris is {Normal: { }}).Select(x => x.ImageUris.Normal).ToList();
                         await SendCardImageMessages(botClient, cancellationToken, cardUris, chatId);
                         break;
                     }
