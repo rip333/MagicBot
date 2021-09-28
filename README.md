@@ -23,6 +23,7 @@ This is a telegram bot used to post images of Magic the Gathering cards into a c
   * [Query syntax](https://scryfall.com/docs/syntax)
 * **Supports Magic the Gathering: Arena decklists!  [Syntax Guide](https://magicarena.fandom.com/wiki/Deck_Import)**
   * Paste the decklist as a single message without any other text. 
+  * Basic lands are filtered out.
 
 ## More Info
 - [Telegram Bots](https://core.telegram.org/bots)
