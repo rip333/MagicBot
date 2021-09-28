@@ -53,8 +53,8 @@ namespace MagicBot.Managers
             var text = update.Message.Text;
             if (ChatUtility.ShouldProcessMessage(update.Message))
             {
-                var mesageType = ChatUtility.ProcessMessageType(text);
-                switch (mesageType)
+                var messageType = ChatUtility.ProcessMessageType(text);
+                switch (messageType)
                 {
                     case MagicMessageType.Card:
                     {
