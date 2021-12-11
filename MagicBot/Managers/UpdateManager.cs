@@ -60,7 +60,7 @@ namespace MagicBot.Managers
                     {
                         var cardNames = ChatUtility.GetCardNamesFromBracketedMessage(text);
                         var cards = await GetCardsFromNames(cardNames);
-                        var cardUris = cards.Where(x => x.ImageUris is {Normal: { }}).Select(x => x.ImageUris.Normal).ToList();
+                        var cardUris = GetImageUrisFromCardList(cards);
                         await SendCardImageMessages(botClient, cancellationToken, cardUris, chatId);
                         break;
                     }
@@ -69,7 +69,7 @@ namespace MagicBot.Managers
                         var mainDeck = ChatUtility.GetMainDeckFromDeckList(text);
                         var cardRequests = ChatUtility.GetRequestsFromDecklist(mainDeck);
                         var cards = await GetCardsFromSetCodeAndCollectorNumberRequests(cardRequests);
-                        var cardUris = FilterBasicLands(cards).Where(x => x.ImageUris is {Normal: { }}).Select(x => x.ImageUris.Normal).ToList();
+                        var cardUris = GetImageUrisFromCardList(cards);
                         await SendCardImageMessages(botClient, cancellationToken, cardUris, chatId);
 
                         //Sideboard
@@ -89,7 +89,27 @@ namespace MagicBot.Managers
             
         }
 
-        private IEnumerable<Card> FilterBasicLands(List<Card> cardList)
+        private static List<string> GetImageUrisFromCardList(List<Card> cards)
+        {
+            var filteredCardList = FilterBasicLands(cards);
+            var cardList = filteredCardList as Card[] ?? filteredCardList.ToArray();
+            var uris = cardList.Where(x => x.ImageUris is {Normal: { }}).Select(x => x.ImageUris.Normal).ToList();
+            foreach (var card in cardList)
+            {
+                if (card.CardFaces == null) continue;
+                foreach (var cardFace in card.CardFaces)
+                {
+                    if (!string.IsNullOrEmpty(cardFace.ImageUris.Normal))
+                    {
+                        uris.Add(cardFace.ImageUris.Normal);
+                    }
+                }
+            }
+
+            return uris;
+        }
+
+        private static IEnumerable<Card> FilterBasicLands(List<Card> cardList)
         {
             return cardList.Where(x => !x.TypeLine.Contains("Basic"));
         }

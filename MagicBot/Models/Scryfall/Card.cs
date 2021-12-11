@@ -20,11 +20,21 @@ namespace MagicBot.Models.Scryfall
         public string CollectorNumber { get; set; }
         [JsonProperty("type_line")]
         public string TypeLine { get; set; }
+        
+        [JsonProperty("card_faces")]
+        public CardFace[] CardFaces { get; set; }
+
     }
 
     public class ImageUris
     {
         [JsonProperty("normal")]
         public string Normal { get; set; }
+    }
+
+    public class CardFace
+    {
+        [JsonProperty("image_uris")]
+        public ImageUris ImageUris { get; set; }
     }
 }
