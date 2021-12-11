@@ -175,9 +175,29 @@ namespace MagicBot.Managers
 
                     mediaSubBatch = inputMedia.Count - 6 < i ? inputMedia.Skip(i).ToList() : inputMedia.GetRange(i, 6);
 
-                    await botClient.SendMediaGroupAsync(chatId, mediaSubBatch, cancellationToken: cancellationToken);
+                    var retry = 0;
+
+                    while (retry < 3)
+                    {
+                        try
+                        {
+                            await botClient.SendMediaGroupAsync(chatId, mediaSubBatch,
+                                cancellationToken: cancellationToken);
+                            retry = 3;
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                            retry++;
+                            if (retry < 3)
+                            {
+                                Console.WriteLine($"Retry #{retry}");
+                            }
+                        }
+                    }
                 }
             }
+            Console.WriteLine($"Finished processing chat {chatId}");
         }
     }
 }
